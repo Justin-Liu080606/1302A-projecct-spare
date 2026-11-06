@@ -1,0 +1,1 @@
+print("zhixin qiaoxi daqi xingqing")
