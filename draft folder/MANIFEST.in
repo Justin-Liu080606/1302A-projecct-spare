@@ -1,0 +1,8 @@
+include README.md
+recursive-include study_plan/static *.html *.css *.js
+recursive-include examples *.py *.ipynb
+recursive-include docs *.md
+prune build
+prune dist
+recursive-exclude * __pycache__ *.py[cod]
+include CONTRIBUTING.md CHANGELOG.md
