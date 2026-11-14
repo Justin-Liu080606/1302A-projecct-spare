@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f8fc">
+  <title>Smart Study Planner · CS1302 Project</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <script src="/static/app.js" defer></script>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand"><span class="brand-mark" aria-hidden="true">✦</span><span>FOCUS<span class="brand-dot">.</span></span></div>
+      <div class="topbar-right"><span class="connection-dot" aria-hidden="true"></span> LOCAL STUDY PLANNER <span class="topbar-sep">/</span> CS1302 PROJECT</div>
+    </header>
+
+    <section class="hero" aria-labelledby="page-title">
+      <div class="hero-content">
+        <div class="eyebrow"><span class="eyebrow-line"></span> MAKE EVERY HOUR COUNT</div>
+        <h1 id="page-title">Turn free time into<br><em>focused progress.</em></h1>
+        <p>Enter your subjects and available hours. Python builds a study schedule for you.<br>View your priorities and progress in a weekly calendar.</p>
+        <div class="hero-chips"><span>◷ Automatic scheduling</span><span>▦ Weekly calendar</span><span>✓ Works offline</span></div>
+      </div>
+      <div class="hero-decoration" aria-hidden="true"><span class="orbit orbit-one"></span><span class="orbit orbit-two"></span><span class="orbit orbit-three"></span><span class="hero-star">✳</span></div>
+    </section>
+
+    <main class="workspace">
+      <section class="form-panel" aria-label="Study plan settings">
+        <div class="panel-heading">
+          <div><p class="section-kicker">YOUR STUDY PLAN</p><h2>Build your plan</h2></div>
+          <button class="text-button" type="button" id="load-demo">Load example ↗</button>
+        </div>
+        <form id="planner-form" novalidate>
+          <section class="form-section" aria-labelledby="subjects-title">
+            <div class="section-head"><span class="section-number">01</span><div><h3 id="subjects-title">Study subjects</h3><p>How much study time does each subject need?</p></div></div>
+            <p class="priority-guide" id="priority-guide"><strong>Priority order:</strong> Please arrange subjects from highest to lowest priority. The first subject gets preference when time is limited. Use the ↑ and ↓ arrows to reorder.</p>
+            <div id="subjects-list" class="repeat-list"></div>
+            <button class="add-button" type="button" id="add-subject"><span aria-hidden="true">＋</span> Add a subject</button>
+          </section>
+
+          <section class="form-section" aria-labelledby="dates-title">
+            <div class="section-head"><span class="section-number">02</span><div><h3 id="dates-title">Planning dates</h3><p>Choose the dates for your study schedule</p></div></div>
+            <div class="field-grid">
+              <label class="field"><span>Start date</span><input type="date" id="start-date" required></label>
+              <label class="field"><span>End date</span><input type="date" id="end-date" required></label>
+            </div>
+            <p class="form-hint">Choose 1–63 days. Use the arrows to explore each week.</p>
+          </section>
+
+          <section class="form-section" aria-labelledby="availability-title">
+            <div class="section-head"><span class="section-number">03</span><div><h3 id="availability-title">Available time</h3><p>Set your usual free time each day</p></div></div>
+            <div id="daily-windows" class="repeat-list window-list"></div>
+            <button class="add-button" type="button" id="add-window"><span aria-hidden="true">＋</span> Add a time window</button>
+            <details class="overrides-details" id="overrides-details">
+              <summary>Override availability on a specific day <span class="summary-caret">⌄</span></summary>
+              <p class="form-hint">Set different hours on a particular day, or leave its windows empty to take the day off.</p>
+              <div id="overrides-list" class="repeat-list"></div>
+              <button class="add-button" type="button" id="add-override"><span aria-hidden="true">＋</span> Customize a day</button>
+            </details>
+          </section>
+
+          <section class="form-section preferences" aria-labelledby="preferences-title">
+            <div class="section-head"><span class="section-number">04</span><div><h3 id="preferences-title">Study preferences</h3><p>Choose session lengths and breaks</p></div></div>
+            <label class="field daily-limit-field"><span>Daily limit per subject</span>
+              <select id="daily-subject-limit-minutes">
+                <option value="60">1 hour / subject / day</option>
+                <option value="90">1.5 hours / subject / day</option>
+                <option value="120" selected>2 hours / subject / day (recommended)</option>
+                <option value="150">2.5 hours / subject / day</option>
+                <option value="180">3 hours / subject / day</option>
+                <option value="240">4 hours / subject / day</option>
+                <option value="300">5 hours / subject / day</option>
+                <option value="360">6 hours / subject / day</option>
+                <option value="480">8 hours / subject / day</option>
+              </select>
+            </label>
+            <p class="form-hint">No subject exceeds this limit on any day, even when an exam is near.</p>
+            <div class="field-grid">
+              <label class="field"><span>Study session</span><select id="session-minutes"><option value="30">30 min</option><option value="60" selected>60 min</option><option value="90">90 min</option></select></label>
+              <label class="field"><span>Break between sessions</span><select id="break-minutes"><option value="0">No break</option><option value="5">5 min</option><option value="10" selected>10 min</option><option value="15">15 min</option></select></label>
+            </div>
+          </section>
+          <div class="form-footer">
+            <p id="error-message" class="error-message" role="alert" hidden></p>
+            <button class="generate-button" type="submit" id="generate-button"><span>Generate study plan</span><span class="button-arrow" aria-hidden="true">↗</span></button>
+            <p class="privacy-note">⌁ All calculations run locally on your computer. Nothing is uploaded.</p>
+          </div>
+        </form>
+      </section>
+
+      <section class="results-panel" aria-live="polite" aria-label="Generated study plan">
+        <div class="result-header"><div><p class="section-kicker">YOUR SCHEDULE</p><h2>Study calendar <span class="result-subtitle">/ Weekly view</span></h2></div><span class="result-pill">LIVE PREVIEW</span></div>
+        <div id="empty-state" class="empty-state">
+          <div class="empty-illustration" aria-hidden="true"><div class="empty-card left-card"></div><div class="empty-card right-card"></div><span class="empty-center">✦</span></div>
+          <h3>A smarter study schedule starts here.</h3>
+          <p>Add subjects, dates and free time on the left.<br>Click Generate study plan to see your weekly calendar.</p>
+          <div class="empty-tips"><span>01 Add subjects</span><span class="step-line"></span><span>02 Set availability</span><span class="step-line"></span><span>03 Generate plan</span></div>
+        </div>
+        <div id="plan-output" hidden>
+          <div class="stats-grid" id="stats-grid"></div>
+          <div id="plan-warnings" class="plan-warnings" role="status" hidden></div>
+          <div class="calendar-card">
+            <div class="calendar-toolbar">
+              <div><p class="calendar-kicker">WEEKLY CALENDAR</p><h3 id="week-title">This week</h3></div>
+              <div class="calendar-actions"><button type="button" id="previous-week" aria-label="Previous week">‹</button><button type="button" id="today-week" class="today-button">First week</button><button type="button" id="next-week" aria-label="Next week">›</button></div>
+            </div>
+            <div class="calendar-scroll"><div id="calendar" class="calendar"></div></div>
+            <div class="calendar-footer"><span><i class="legend-free"></i> Available slots (light blue)</span><span>Unshaded areas are unavailable</span></div>
+          </div>
+          <div class="subject-summary"><div class="subject-summary-heading"><div><p class="calendar-kicker">PROGRESS TRACKER</p><h3>Subject progress</h3></div><div id="notice-tag" class="notice-tag"></div></div><div id="subject-progress" class="progress-list"></div></div>
+          <p class="algorithm-note">Scheduling method: subjects are ranked from top to bottom. Priority-weighted balancing favors higher-priority subjects without letting any one subject monopolize the day. Daily limits and exam deadlines are always respected. Unscheduled hours are reported, not hidden.</p>
+        </div>
+      </section>
+    </main>
+    <footer class="site-footer"><span>FOCUS. © CS1302 STUDY PLANNER</span><span>BUILT WITH PYTHON · HTML · CSS · JAVASCRIPT</span></footer>
+  </div>
+  <template id="subject-template">
+    <div class="repeat-card subject-row">
+      <div class="repeat-card-top"><span class="row-label">Subject <span class="subject-index"></span> <span class="priority-badge"></span></span><div class="subject-actions"><button type="button" class="order-button move-subject-up" aria-label="Move subject up" title="Higher priority">↑</button><button type="button" class="order-button move-subject-down" aria-label="Move subject down" title="Lower priority">↓</button><button type="button" class="remove-button remove-subject" aria-label="Remove subject" title="Remove subject">×</button></div></div>
+      <label class="field"><span>Subject name</span><input class="subject-name" type="text" placeholder="e.g. CS1302 Python" maxlength="80" required></label>
+      <div class="field-grid"><label class="field"><span>Required hours</span><input class="subject-hours" type="number" min="0.5" max="500" step="0.5" value="2" required></label><label class="field"><span>Exam date <em>optional</em></span><input class="subject-deadline" type="date"></label></div>
+    </div>
+  </template>
+  <template id="window-template">
+    <div class="window-row"><label class="field"><span>Start</span><input class="window-start" type="time" value="08:00" required></label><span class="window-dash">—</span><label class="field"><span>End</span><input class="window-end" type="time" value="11:00" required></label><button class="remove-button remove-window" type="button" aria-label="Remove time window" title="Remove time window">×</button></div>
+  </template>
+  <template id="override-template">
+    <div class="repeat-card override-card"><div class="repeat-card-top"><span class="row-label">Specific date</span><button type="button" class="remove-button remove-override" aria-label="Remove date override" title="Remove date override">×</button></div><label class="field"><span>Date</span><input class="override-date" type="date" required></label><div class="override-windows repeat-list window-list"></div><button type="button" class="add-button add-override-window"><span aria-hidden="true">＋</span> Add window on this day</button></div>
+  </template>
+</body>
+</html>

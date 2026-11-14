@@ -1,4 +1,9 @@
 # Byte-compiled / optimized / DLL files
+
+# Local scheduler output and drafts
+study_plan.html
+draft folder/
+.DS_Store
 __pycache__/
 *.py[codz]
 *$py.class
