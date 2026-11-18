@@ -1,4 +1,4 @@
-"""可手算的排程、HTML 和输入校验案例；无需第三方测试库。"""
+"""Hand-computable scheduling, HTML escaping and validation tests; no third-party test framework."""
 
 import copy
 from datetime import date, timedelta
@@ -64,9 +64,9 @@ class StudyPlanTests(unittest.TestCase):
         return html, "".join(parser.text)
 
     def test_exact_capacity_and_stable_order(self):
-        # 每天 60 分钟，共 420；两科同日考试，输入顺序决定先后。
+        # Daily 60 minutes (420 total); for identical deadlines, input order decides.
         tasks = [
-            {"subject": '数学 <A> & "B"', "exam_date": date(2026, 11, 16), "minutes": 90},
+            {"subject": 'Math <A> & "B"', "exam_date": date(2026, 11, 16), "minutes": 90},
             {"subject": "Python", "exam_date": date(2026, 11, 16), "minutes": 330},
         ]
         original = copy.deepcopy((tasks, self.slots))
@@ -77,37 +77,37 @@ class StudyPlanTests(unittest.TestCase):
         self.assertEqual((tasks, self.slots), original)
         self.check_invariants(tasks, sessions, missing)
         html, text = self.check_html(sessions, missing)
-        self.assertIn('数学 &lt;A&gt; &amp; &quot;B&quot;', html)
+        self.assertIn('Math &lt;A&gt; &amp; &quot;B&quot;', html)
         self.assertIn(tasks[0]["subject"], text)
         self.assertIn("Python", text)
-        self.assertIn("剩余 0 分钟", text)
+        self.assertIn("0 minutes remaining", text)
 
     def test_shortage_deadlines_and_exam_priority(self):
-        # 后输入的早考科优先：考前只有 60 分钟，需求 90，缺 30。
-        # 晚考科在第二天用 60 分钟，需求 120，缺 60。
+        # Earlier exam on the second subject wins: 60 of 90 minutes are possible.
+        # Later exam subject receives 60 of 120 requested minutes.
         tasks = [
-            {"subject": "晚考 <script>alert(1)</script>",
+            {"subject": "Later <script>alert(1)</script>",
              "exam_date": self.start + timedelta(days=2), "minutes": 120},
-            {"subject": "早考 & Python", "exam_date": self.start + timedelta(days=1),
+            {"subject": "Soon & Python", "exam_date": self.start + timedelta(days=1),
              "minutes": 90},
         ]
         sessions, missing = schedule(tasks, self.slots)
         self.assertEqual([s["subject_id"] for s in sessions], [1, 1, 0, 0])
         self.assertEqual(missing, [
-            {"subject": "早考 & Python", "remaining_minutes": 30},
+            {"subject": "Soon & Python", "remaining_minutes": 30},
             {"subject": tasks[0]["subject"], "remaining_minutes": 60},
         ])
         self.check_invariants(tasks, sessions, missing)
         html, text = self.check_html(sessions, missing)
         self.assertIn("&lt;script&gt;", html)
-        self.assertIn("早考 & Python：剩余 30 分钟", text)
-        self.assertIn(tasks[0]["subject"] + "：剩余 60 分钟", text)
+        self.assertIn("Soon & Python — 30 minutes remaining", text)
+        self.assertIn(tasks[0]["subject"] + " — 60 minutes remaining", text)
 
     def test_duplicate_slots_past_exams_and_midnight(self):
         slots = [{"date": self.start, "start": 1410, "end": 1440}] * 2
         tasks = [
-            {"subject": "已考", "exam_date": self.start, "minutes": 30},
-            {"subject": "未考", "exam_date": self.start + timedelta(days=1), "minutes": 60},
+            {"subject": "Expired", "exam_date": self.start, "minutes": 30},
+            {"subject": "Upcoming", "exam_date": self.start + timedelta(days=1), "minutes": 60},
         ]
         sessions, missing = schedule(tasks, slots)
         self.assertEqual(len(sessions), 1)
@@ -120,11 +120,11 @@ class StudyPlanTests(unittest.TestCase):
     def test_interactive_validation_and_multiple_windows(self):
         answers = [
             "2026-02-30", "2026-11-09", "0", "2",
-            "09:15", "10:00", "09:00",  # 结束早于开始，重新输入
+            "09:15", "10:00", "09:00",  # End before start; should prompt again
             "09:00", "10:00",
-            "09:30", "10:30",  # 与上一时段重叠
+            "09:30", "10:30",  # Overlaps with previous time window
             "11:00", "12:00",
-            "1", "", "数学", "invalid", "2026-11-12", "0", "-30", "45", "60",
+            "1", "", "Math", "invalid", "2026-11-12", "0", "-30", "45", "60",
         ]
         with patch("builtins.input", side_effect=answers), patch("builtins.print") as output:
             start, tasks, slots = collect_input()

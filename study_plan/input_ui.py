@@ -1,4 +1,4 @@
-"""终端输入与基本校验；时间统一转换成从午夜起的分钟数。"""
+"""Terminal input and validation; times are minutes since midnight."""
 
 from datetime import date, timedelta
 
@@ -12,7 +12,7 @@ def ask_date(prompt):
                 raise ValueError
             return result
         except ValueError:
-            print("请输入有效日期，格式为 YYYY-MM-DD，例如 2026-11-10。")
+            print("Enter a valid date in YYYY-MM-DD format, e.g. 2026-11-10.")
 
 
 def ask_positive_integer(prompt, multiple=1):
@@ -23,7 +23,7 @@ def ask_positive_integer(prompt, multiple=1):
                 return value
         except ValueError:
             pass
-        print(f"请输入正整数，且必须是 {multiple} 的整数倍。")
+        print(f"Enter a positive integer divisible by {multiple}.")
 
 
 def ask_time(prompt):
@@ -38,41 +38,41 @@ def ask_time(prompt):
                 return 1440
         except ValueError:
             pass
-        print("请输入半小时边界的时间，如 09:00 或 09:30；24:00 只能用作结束时间。")
+        print("Enter a half-hour time, such as 09:00 or 09:30; 24:00 is only valid as an end time.")
 
 
 def collect_input():
-    start_date = ask_date("计划开始日期 (YYYY-MM-DD)：")
+    start_date = ask_date("Plan start date (YYYY-MM-DD): ")
     while start_date > date.max - timedelta(days=6):
-        print("开始日期必须允许往后生成完整的 7 天。")
-        start_date = ask_date("计划开始日期 (YYYY-MM-DD)：")
+        print("Start date must permit a full 7-day plan.")
+        start_date = ask_date("Plan start date (YYYY-MM-DD): ")
 
-    count = ask_positive_integer("每天有几个默认空闲时段？")
+    count = ask_positive_integer("How many free-time windows per day? ")
     windows = []
     for index in range(count):
         while True:
-            print(f"默认空闲时段 {index + 1}（每天重复）：")
-            start = ask_time("开始时间 (HH:MM)：")
-            end = ask_time("结束时间 (HH:MM)：")
+            print(f"Default time window {index + 1} (repeated daily):")
+            start = ask_time("Start time (HH:MM): ")
+            end = ask_time("End time (HH:MM): ")
             if start >= end:
-                print("结束时间必须晚于开始时间，不能跨午夜。请重新输入。")
+                print("End time must be later than start time on the same day. Try again.")
             elif any(start < old_end and old_start < end
                      for old_start, old_end in windows):
-                print("空闲时段不能重叠。请重新输入。")
+                print("Time windows must not overlap. Try again.")
             else:
                 windows.append((start, end))
                 break
 
     tasks = []
-    count = ask_positive_integer("要复习几科？")
+    count = ask_positive_integer("How many subjects? ")
     for index in range(count):
         name = ""
         while not name:
-            name = input(f"第 {index + 1} 科名称：").strip()
+            name = input(f"Name of subject #{index + 1}: ").strip()
             if not name:
-                print("科目名称不能为空。")
-        exam_date = ask_date("考试日期 (YYYY-MM-DD)：")
-        minutes = ask_positive_integer("剩余复习时长（分钟，30 的整数倍）：", 30)
+                print("Subject name cannot be empty.")
+        exam_date = ask_date("Exam date (YYYY-MM-DD): ")
+        minutes = ask_positive_integer("Remaining study time (minutes, divisible by 30): ", 30)
         tasks.append({"subject": name, "exam_date": exam_date, "minutes": minutes})
 
     slots = []
