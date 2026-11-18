@@ -1,9 +1,9 @@
-[README.md](https://github.com/user-attachments/files/35005558/README.md)
+[README.md](https://github.com/user-attachments/files/35005946/README.md)
 # Smart Study Planner · CS1302 Group 06
 
 > **Installable Python package** for automatic, explainable exam-aware study scheduling, with a colored weekly calendar, optional local web UI, and `.ics` calendar export.
 
-This is the **source code prepared for PyPI**. It has **not** been published by this ZIP: the team must publish a release from its own public repository and PyPI account before claiming the published rubric point.
+Smart Study Planner is an open-source Python package for building balanced, priority-aware study schedules. Its scheduling engine works directly in Python and Jupyter notebooks, while an optional local web interface displays a weekly calendar. This repository contains the source code, usage examples, tests, and documentation.
 
 ## Motivation & innovation
 
@@ -32,10 +32,10 @@ Python **3.9+** is required. No mandatory runtime third-party dependencies.
 python -m pip install .
 ```
 
-**After the group publishes to PyPI** (verify the distribution name before publishing):
+**After the official PyPI release** (not yet available until the team publishes it):
 
 ```bash
-python -m pip install cs1302-study-planner-group06
+python -m pip install smart-study-planner==0.5.0
 ```
 
 The distribution name in `pip install` differs from the Python **import name**, which remains `study_plan`.
@@ -67,7 +67,7 @@ print(summarize_plan(plan))
 print(plan["sessions"][:2])
 ```
 
-For **JupyterHub**, after installing the published package in a notebook cell, show the weekly calendar **inline**, without needing to expose a web port:
+For **JupyterHub**, after installing the package in the notebook environment, show the weekly calendar **inline**, without needing to expose a web port:
 
 ```python
 from IPython.display import display, HTML
@@ -85,7 +85,7 @@ See [`examples/quickstart.py`](examples/quickstart.py) and [`examples/jupyterhub
 
 ## Web interface (PyCharm)
 
-In PyCharm, open the entire extracted project folder and run `run.py`, or from a terminal:
+In PyCharm, open the project folder and run `run.py`, or from a terminal:
 
 ```bash
 python -m study_plan
@@ -161,7 +161,7 @@ run.py                        Simple PyCharm runner
 This is a deterministic heuristic, **not an AI predictor** or a guarantee of optimal scheduling. It cannot infer learning needs or solve impossible schedules. The included web UI runs locally and is separate from the importable package API. The package is a classroom project that may require further hardening for general production use.
 
 
-## Priority-aware planning (v0.4.0)
+## Priority-aware planning
 
 **Enter subjects from highest to lowest priority.** The first card is priority #1; use the ↑ and ↓ controls to change their order without retyping. The API similarly treats the first `subjects` entry as highest priority.
 
@@ -169,13 +169,13 @@ The scheduler uses weighted fair queuing. It favors higher priority subjects whe
 
 For a concise setup walkthrough, see [GETTING_STARTED.md](GETTING_STARTED.md).
 
-## Spreading sessions across a long date range (v0.4.0)
+## Spreading sessions across a long date range
 
 The scheduler distributes each subject's study requirement across all dates on which that subject is eligible. More available time on a date can attract a larger share; days off have no allocations. A short workload over several weeks remains visible in later weeks, rather than being packed into the beginning.
 
 **Exam dates take precedence over spreading:** a subject's study blocks can only appear before its exam date. Priority order still controls how competing subjects share limited hours, with the strict per-subject daily cap and session breaks unchanged. A small workload cannot fill every date when each session requires at least 30 minutes.
 
-## Morning / afternoon balance (v0.5.0)
+## Morning / afternoon balance
 
 The scheduler balances study sessions over multiple available windows **within each day**. For example, with free periods at 08:00–11:00 and 14:00–17:00, it avoids placing all daily sessions in the morning when both windows have room. Long and short windows receive study time in proportion to their capacity; if there is only one short session on a given day, the preferred window rotates across active study days. All existing subject priorities, daily limits, exam cutoffs and date-aware pacing remain in effect.
 
