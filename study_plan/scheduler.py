@@ -1,21 +1,21 @@
-"""纯数据排程：date 使用 datetime.date，start/end 使用午夜起的分钟数。"""
+"""Legacy data-only scheduler. Dates use datetime.date and times use minutes since midnight."""
 
 
 def schedule(tasks, available_slots):
-    """按考试日期稳定排序，返回 (sessions, unscheduled)，不修改输入。
+    """Sort by exam date and return (sessions, unscheduled) without changing inputs.
 
     tasks: [{subject, exam_date, minutes}]
-    available_slots: [{date, start, end}]，每段长度为 30 的整数倍。
+    available_slots: [{date, start, end}]; every slot length is a multiple of 30 minutes.
     sessions: [{date, start, end, subject, subject_id}]
     unscheduled: [{subject, remaining_minutes}]
-    subject_id 为输入序号，供日历区分同名科目。
+    subject_id is the input order, allowing separate events with equal names.
     """
     free_slots = set()
     for slot in available_slots:
         if not (0 <= slot["start"] < slot["end"] <= 1440):
-            raise ValueError("空闲时段必须在一天内，且开始早于结束。")
+            raise ValueError("Each availability window must be within one day, with start before end.")
         if slot["start"] % 30 or slot["end"] % 30:
-            raise ValueError("空闲时段必须在半小时边界上。")
+            raise ValueError("Time windows must align to 30-minute boundaries.")
         for start in range(slot["start"], slot["end"], 30):
             free_slots.add((slot["date"], start))
 
@@ -27,7 +27,7 @@ def schedule(tasks, available_slots):
     for subject_id, task in ordered_tasks:
         remaining = task["minutes"]
         if not isinstance(remaining, int) or remaining <= 0 or remaining % 30:
-            raise ValueError("复习时长必须为正整数，且为 30 的整数倍。")
+            raise ValueError("Study time must be positive and divisible by 30 minutes.")
         for day, start in ordered_slots:
             if remaining == 0:
                 break
