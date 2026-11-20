@@ -29,13 +29,13 @@ Python **3.9+** is required. No mandatory runtime third-party dependencies.
 **Before the first PyPI release:** open a terminal in the project's root directory:
 
 ```bash
-python -m pip install .
+%python -m pip install .
 ```
 
 **After the official PyPI release** (not yet available until the team publishes it):
 
 ```bash
-python -m pip install smart-study-planner==0.5.0
+%python -m pip install smart-study-planner==0.5.0
 ```
 
 The distribution name in `pip install` differs from the Python **import name**, which remains `study_plan`.
