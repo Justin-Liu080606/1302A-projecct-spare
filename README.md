@@ -22,7 +22,7 @@ Students often know how many hours they need to study but struggle to fit them i
 - Reuse results as JSON-compatible Python data, embedded JupyterHub HTML, or `.ics` calendar.
 - Optional local browser UI with a colorful navigable weekly calendar, requiring no web framework.
 
-## Installation
+## Installation(in Jupyter)
 
 Python **3.9+** is required. No mandatory runtime third-party dependencies.
 
