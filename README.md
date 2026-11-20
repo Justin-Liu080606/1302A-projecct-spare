@@ -22,7 +22,7 @@ Students often know how many hours they need to study but struggle to fit them i
 - Reuse results as JSON-compatible Python data, embedded JupyterHub HTML, or `.ics` calendar.
 - Optional local browser UI with a colorful navigable weekly calendar, requiring no web framework.
 
-## Installation(in Jupyter)
+## Installation
 
 Python **3.9+** is required. No mandatory runtime third-party dependencies.
 
@@ -35,7 +35,7 @@ python -m pip install .
 **After the official PyPI release** (not yet available until the team publishes it):
 
 ```bash
-!python -m pip install smart-study-planner==0.5.0
+python -m pip install smart-study-planner==0.5.0
 ```
 
 The distribution name in `pip install` differs from the Python **import name**, which remains `study_plan`.
